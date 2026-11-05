@@ -10,7 +10,8 @@
   "dependencies": {
     "next": "15.5.28",
     "react": "19.1.10",
-    "react-dom": "19.1.10"
+    "react-dom": "19.1.10",
+    "@neondatabase/serverless": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^22",
