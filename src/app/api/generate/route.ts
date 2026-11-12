@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
-import { countGenerations, db, findUserById, FREE_GENERATIONS } from "@/lib/db";
+import { countGenerations, db, findUserById, FREE_GENERATIONS, getBrandProfile } from "@/lib/db";
 import { generatePosts, GenerateInput } from "@/lib/ai";
+import { readWebsite } from "@/lib/web";
 
 export const maxDuration = 60;
 
@@ -30,12 +31,41 @@ export async function POST(req: Request) {
       audience: String(body.audience ?? "").slice(0, 300),
       platform: String(body.platform ?? "Instagram").slice(0, 40),
       tone: String(body.tone ?? "Friendly").slice(0, 40),
+      link: String(body.link ?? "").trim().slice(0, 500),
     };
     if (!input.product.trim()) {
       return NextResponse.json({ error: "Tell us about the product you want to post about." }, { status: 400 });
     }
 
-    const posts = await generatePosts(input);
+    // Pull in everything we know about this business so the posts are true and sound like them.
+    const brand = await getBrandProfile(user.id);
+    let linkText = "";
+    if (input.link) {
+      try {
+        linkText = await readWebsite(input.link, { followLinks: false });
+      } catch (err) {
+        return NextResponse.json(
+          { error: `We couldn't read that link: ${(err as Error).message} Try another link, or paste the details instead.` },
+          { status: 400 }
+        );
+      }
+    }
+
+    const posts = await generatePosts(
+      input,
+      brand
+        ? {
+            businessName: brand.business_name,
+            instagram: brand.instagram,
+            websiteText: brand.website_text,
+            samplePosts: brand.sample_posts,
+            notes: brand.notes,
+            brief: brand.brief,
+          }
+        : {},
+      linkText
+    );
+    if (posts.length === 0) throw new Error("The AI didn't return any posts. Please try again.");
     const rows = await db()`
       INSERT INTO generations (user_id, input, output)
       VALUES (${user.id}, ${JSON.stringify(input)}, ${JSON.stringify(posts)})

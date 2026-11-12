@@ -2,11 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import BrandKit, { Brand, EMPTY_BRAND } from "./BrandKit";
+import GraphicMaker from "./GraphicMaker";
 
-type Post = { idea: string; hook: string; caption: string; hashtags: string[]; visual: string };
+type Post = {
+  idea: string;
+  hook: string;
+  caption: string;
+  hashtags: string[];
+  visual: string;
+  graphicHeadline?: string;
+  graphicSub?: string;
+  needsInfo?: string[];
+};
 type HistoryItem = {
   id: number;
-  input: { business: string; product: string; platform: string; tone: string };
+  input: { business: string; product: string; platform: string; tone: string; link?: string };
   output: Post[];
   created_at: string;
 };
@@ -22,10 +33,14 @@ export default function Dashboard(props: {
   justPaid: boolean;
   canceled: boolean;
   history: HistoryItem[];
+  brand: Brand | null;
 }) {
+  const [brand, setBrand] = useState<Brand>(props.brand ? { ...EMPTY_BRAND, ...props.brand } : EMPTY_BRAND);
+  const [openGraphic, setOpenGraphic] = useState<string | null>(null);
   const [form, setForm] = useState({
-    business: "",
+    business: props.brand?.businessName || "",
     product: "",
+    link: "",
     audience: "",
     platform: "Instagram",
     tone: "Friendly",
@@ -133,8 +148,22 @@ export default function Dashboard(props: {
           </div>
         )}
 
+        <BrandKit
+          brand={brand}
+          onSaved={(b) => {
+            setBrand(b);
+            if (b.businessName) setForm((f) => ({ ...f, business: f.business || b.businessName }));
+          }}
+        />
+
         <form className="card gen-form" onSubmit={generate}>
-          <h2>Create posts</h2>
+          <div>
+            <p className="eyebrow small-eyebrow">Step 2 · Posts</p>
+            <h2>Create posts</h2>
+            {!brand.brief && (
+              <p className="muted small">Set up your Brand Kit first for posts with your real details. Otherwise Socially will leave [placeholders] for anything it doesn&apos;t know.</p>
+            )}
+          </div>
           <div className="grid-2">
             <label>
               Business or brand name
@@ -152,8 +181,12 @@ export default function Dashboard(props: {
               rows={3}
               value={form.product}
               onChange={(e) => set("product", e.target.value)}
-              placeholder="e.g. Our new pumpkin oat latte, only available through November, 20% off with a student ID"
+              placeholder="e.g. Our holiday market this Saturday. Spotlight 3 of our vendors and remind people entry is free"
             />
+          </label>
+          <label>
+            Link with details <span className="muted small">(optional: event page, product page, ticket link)</span>
+            <input value={form.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" inputMode="url" />
           </label>
           <div className="grid-2">
             <label>
@@ -186,9 +219,28 @@ export default function Dashboard(props: {
                   <p className="caption">{p.caption}</p>
                   <p className="tags">{p.hashtags.join(" ")}</p>
                   <p className="muted small"><strong>Visual:</strong> {p.visual}</p>
-                  <button type="button" className="btn btn-ghost" onClick={() => copy(full, `new-${i}`)}>
-                    {copied === `new-${i}` ? "Copied!" : "Copy caption + hashtags"}
-                  </button>
+                  {p.needsInfo && p.needsInfo.length > 0 && (
+                    <p className="needs small">Fill in before posting: {p.needsInfo.join(", ")}</p>
+                  )}
+                  <div className="row-gap">
+                    <button type="button" className="btn btn-ghost" onClick={() => copy(full, `new-${i}`)}>
+                      {copied === `new-${i}` ? "Copied!" : "Copy caption + hashtags"}
+                    </button>
+                    <button type="button" className="btn btn-ghost" onClick={() => setOpenGraphic(openGraphic === `new-${i}` ? null : `new-${i}`)}>
+                      {openGraphic === `new-${i}` ? "Hide graphic" : "Make graphic"}
+                    </button>
+                  </div>
+                  {openGraphic === `new-${i}` && (
+                    <GraphicMaker
+                      headline={p.graphicHeadline || p.hook}
+                      sub={p.graphicSub || ""}
+                      platform={form.platform}
+                      businessName={brand.businessName}
+                      instagram={brand.instagram}
+                      logo={brand.logo}
+                      colors={brand.colors}
+                    />
+                  )}
                 </article>
               );
             })}
@@ -212,13 +264,33 @@ export default function Dashboard(props: {
                     <p className="hook">{p.hook}</p>
                     <p className="caption">{p.caption}</p>
                     <p className="tags">{p.hashtags.join(" ")}</p>
-                    <button
-                      type="button"
-                      className="btn btn-ghost"
-                      onClick={() => copy(`${p.caption}\n\n${p.hashtags.join(" ")}`, `${h.id}-${i}`)}
-                    >
-                      {copied === `${h.id}-${i}` ? "Copied!" : "Copy"}
-                    </button>
+                    <div className="row-gap">
+                      <button
+                        type="button"
+                        className="btn btn-ghost"
+                        onClick={() => copy(`${p.caption}\n\n${p.hashtags.join(" ")}`, `${h.id}-${i}`)}
+                      >
+                        {copied === `${h.id}-${i}` ? "Copied!" : "Copy"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost"
+                        onClick={() => setOpenGraphic(openGraphic === `${h.id}-${i}` ? null : `${h.id}-${i}`)}
+                      >
+                        {openGraphic === `${h.id}-${i}` ? "Hide graphic" : "Make graphic"}
+                      </button>
+                    </div>
+                    {openGraphic === `${h.id}-${i}` && (
+                      <GraphicMaker
+                        headline={p.graphicHeadline || p.hook}
+                        sub={p.graphicSub || ""}
+                        platform={h.input.platform}
+                        businessName={brand.businessName}
+                        instagram={brand.instagram}
+                        logo={brand.logo}
+                        colors={brand.colors}
+                      />
+                    )}
                   </div>
                 ))}
               </details>
