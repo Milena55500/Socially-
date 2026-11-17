@@ -45,10 +45,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Logo must be a PNG, JPG or WebP under 500 KB." }, { status: 400 });
     }
 
-    const rawUrl = String(body.websiteUrl ?? "").trim().slice(0, 500);
+    let rawUrl = String(body.websiteUrl ?? "").trim().slice(0, 500);
+    // People often put their Instagram here. Move it to the Instagram field instead of failing.
+    if (/^@|instagram\.com/i.test(rawUrl)) {
+      if (!String(body.instagram ?? "").trim()) body.instagram = rawUrl;
+      rawUrl = "";
+    }
     const websiteUrl = rawUrl ? normalizeUrl(rawUrl) : "";
     if (rawUrl && !websiteUrl) {
-      return NextResponse.json({ error: "That doesn't look like a public website address." }, { status: 400 });
+      return NextResponse.json(
+        { error: `"${rawUrl}" doesn't look like a website. Use something like yoursite.com, or leave the Website box empty (it's optional).` },
+        { status: 400 }
+      );
     }
 
     const profile: BrandProfile = {
