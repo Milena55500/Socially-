@@ -8,22 +8,22 @@ export const dynamic = "force-dynamic";
 const unsplash = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
 const PHOTOS = {
   hero: {
-    src: unsplash("photo-1761150285221-c164680ccbea", 900),
-    alt: "A maker carving wood at an outdoor art stall",
-    by: "Juup Schram",
-    link: "https://unsplash.com/photos/man-carving-wood-at-an-outdoor-art-stall-EGWFtb_njdA",
+    src: unsplash("photo-1768127502130-bca3e208eba6", 900),
+    alt: "A young woman in a baseball cap at a market stall",
+    by: "Tuaans",
+    link: "https://unsplash.com/photos/young-woman-in-a-baseball-cap-at-a-market-stall-c-wuBHes0So",
   },
   stall: {
-    src: unsplash("photo-1768992831140-2f6f6c388f5b"),
-    alt: "Shoppers browsing a market stall full of colorful masks and scarves",
-    by: "Claudio Schwarz",
-    link: "https://unsplash.com/photos/people-browse-a-stall-filled-with-colorful-masks-and-scarves-xDR0GP-EpNk",
+    src: unsplash("photo-1517457373958-b7bdd4587205"),
+    alt: "A group of young people laughing together at a party under string lights",
+    by: "Samantha Gades",
+    link: "https://unsplash.com/photos/laughing-people-in-party-fIHozNWfcvs",
   },
   crowd: {
-    src: unsplash("photo-1639775465486-8a891a71d53f", 900),
-    alt: "A crowd walking through a market street at night",
-    by: "Richard Bell",
-    link: "https://unsplash.com/photos/a-crowd-of-people-walking-down-a-street-at-night-F-SwH9M0srU",
+    src: unsplash("photo-1758274251413-bb06b1a02baf", 900),
+    alt: "Two friends laughing on a city street holding shopping bags",
+    by: "Vitaly Gariev",
+    link: "https://unsplash.com/photos/two-stylish-women-with-shopping-bags-talking-outdoors-DPoRBdHhjRo",
   },
 };
 
