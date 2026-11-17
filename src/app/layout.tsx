@@ -5,9 +5,9 @@ import "./globals.css";
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "700", "800"] });
 
 export const metadata: Metadata = {
-  title: "Socially — Your AI social media assistant",
+  title: "Socially: captions that sound like you",
   description:
-    "Socially helps small businesses and content creators generate post ideas, write engaging captions, and discover hashtags.",
+    "Captions that sound like you. Socially helps college students and young creators write posts for grad pics, nights out and big wins, and helps clubs and small businesses promote what they run.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -43,6 +43,20 @@ export function ensureSchema(): Promise<void> {
           output JSONB NOT NULL,
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )`;
+      await sql`
+        CREATE TABLE IF NOT EXISTS brand_profiles (
+          user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+          business_name TEXT NOT NULL DEFAULT '',
+          website_url TEXT NOT NULL DEFAULT '',
+          website_text TEXT NOT NULL DEFAULT '',
+          instagram TEXT NOT NULL DEFAULT '',
+          sample_posts TEXT NOT NULL DEFAULT '',
+          notes TEXT NOT NULL DEFAULT '',
+          logo TEXT NOT NULL DEFAULT '',
+          colors JSONB NOT NULL DEFAULT '[]',
+          brief JSONB,
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )`;
       const existing = await sql`SELECT id FROM users WHERE email = ${DEMO_EMAIL}`;
       if (existing.length === 0) {
         const hash = await hashPassword(DEMO_PASSWORD);
@@ -78,4 +92,40 @@ export const FREE_GENERATIONS = 3;
 export async function countGenerations(userId: number): Promise<number> {
   const rows = await db()`SELECT COUNT(*)::int AS n FROM generations WHERE user_id = ${userId}`;
   return (rows[0] as { n: number }).n;
+}
+
+export type BrandProfile = {
+  business_name: string;
+  website_url: string;
+  website_text: string;
+  instagram: string;
+  sample_posts: string;
+  notes: string;
+  logo: string;
+  colors: string[];
+  brief: import("./ai").BrandBrief | null;
+  updated_at?: string;
+};
+
+export async function getBrandProfile(userId: number): Promise<BrandProfile | null> {
+  await ensureSchema();
+  const rows = await db()`
+    SELECT business_name, website_url, website_text, instagram, sample_posts, notes, logo, colors, brief, updated_at
+    FROM brand_profiles WHERE user_id = ${userId}`;
+  return (rows[0] as BrandProfile) ?? null;
+}
+
+export async function saveBrandProfile(userId: number, p: BrandProfile) {
+  await ensureSchema();
+  await db()`
+    INSERT INTO brand_profiles
+      (user_id, business_name, website_url, website_text, instagram, sample_posts, notes, logo, colors, brief, updated_at)
+    VALUES
+      (${userId}, ${p.business_name}, ${p.website_url}, ${p.website_text}, ${p.instagram}, ${p.sample_posts},
+       ${p.notes}, ${p.logo}, ${JSON.stringify(p.colors)}, ${p.brief ? JSON.stringify(p.brief) : null}, NOW())
+    ON CONFLICT (user_id) DO UPDATE SET
+      business_name = EXCLUDED.business_name, website_url = EXCLUDED.website_url,
+      website_text = EXCLUDED.website_text, instagram = EXCLUDED.instagram,
+      sample_posts = EXCLUDED.sample_posts, notes = EXCLUDED.notes, logo = EXCLUDED.logo,
+      colors = EXCLUDED.colors, brief = EXCLUDED.brief, updated_at = NOW()`;
 }

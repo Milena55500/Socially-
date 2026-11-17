@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/auth";
-import { countGenerations, db, findUserById, FREE_GENERATIONS, markPaid } from "@/lib/db";
+import { countGenerations, db, findUserById, FREE_GENERATIONS, getBrandProfile, markPaid } from "@/lib/db";
 import { paidUserIdForSession, PRICE_CENTS } from "@/lib/stripe";
 import Dashboard from "./Dashboard";
 
@@ -36,6 +36,7 @@ export default async function DashboardPage({
   const history = await db()`
     SELECT id, input, output, created_at FROM generations
     WHERE user_id = ${user.id} ORDER BY created_at DESC LIMIT 10`;
+  const brand = await getBrandProfile(user.id);
 
   return (
     <Dashboard
@@ -46,6 +47,21 @@ export default async function DashboardPage({
       justPaid={justPaid || (!!params.session_id && user.has_paid)}
       canceled={!!params.canceled}
       history={JSON.parse(JSON.stringify(history))}
+      brand={
+        brand
+          ? {
+              businessName: brand.business_name,
+              websiteUrl: brand.website_url,
+              instagram: brand.instagram,
+              samplePosts: brand.sample_posts,
+              notes: brand.notes,
+              logo: brand.logo,
+              colors: brand.colors,
+              brief: brand.brief,
+              websiteRead: brand.website_text.length > 0,
+            }
+          : null
+      }
     />
   );
 }

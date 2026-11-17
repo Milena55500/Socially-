@@ -4,9 +4,46 @@ import { PRICE_CENTS } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
+// Photos are free to use under the Unsplash License (https://unsplash.com/license).
+const unsplash = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
+const PHOTOS = {
+  hero: {
+    src: unsplash("photo-1753162660995-52218587ce71", 900),
+    alt: "Two young designers filming a video about their sketches in their studio",
+    by: "Vitaly Gariev",
+    link: "https://unsplash.com/photos/two-women-are-filming-a-video-tvePcqY52-4",
+  },
+  night: {
+    src: unsplash("photo-1768127502130-bca3e208eba6"),
+    alt: "A young woman in a baseball cap at a lantern-lit market stall",
+    by: "Tuaans",
+    link: "https://unsplash.com/photos/young-woman-in-a-baseball-cap-at-a-market-stall-c-wuBHes0So",
+  },
+  party: {
+    src: unsplash("photo-1760348082270-3a46a3512850", 900),
+    alt: "A graduate celebrating outdoors with friends and family",
+    by: "Mattia Revelant",
+    link: "https://unsplash.com/photos/graduation-celebration-with-family-and-friends-outdoors-pabZkFHzgYg",
+  },
+};
+
+// Real quotes from people who've used Socially. Add them here and the section appears on the homepage.
+// Only add quotes you have permission to use, e.g.
+// { quote: "…", name: "Jane Doe", role: "Class of 2027" },
+const TESTIMONIALS: { quote: string; name: string; role: string }[] = [];
+
+function Credit({ by, link }: { by: string; link: string }) {
+  return (
+    <p className="credit">
+      Photo: <a href={link} target="_blank" rel="noreferrer">{by} / Unsplash</a>
+    </p>
+  );
+}
+
 export default async function Home() {
   const loggedIn = (await getSessionUserId()) !== null;
   const price = (PRICE_CENTS / 100).toFixed(PRICE_CENTS % 100 === 0 ? 0 : 2);
+  const start = loggedIn ? "/dashboard" : "/signup";
 
   return (
     <div className="page">
@@ -26,62 +63,144 @@ export default async function Home() {
         </nav>
       </header>
 
-      <main className="hero">
-        <p className="eyebrow">AI-powered social media assistant</p>
-        <h1>
-          Never stare at a <span className="highlight">blank post</span> again.
-        </h1>
-        <p className="lead">
-          Socially is for small business owners and creators who don&apos;t have time to be a
-          full-time social media manager. Describe what you&apos;re selling, and in seconds you get
-          three ready-to-post ideas, each with a scroll-stopping hook, a caption in your brand&apos;s
-          voice, the right hashtags, and what to photograph.
-        </p>
-        <div className="cta-row">
-          <Link href={loggedIn ? "/dashboard" : "/signup"} className="btn btn-primary btn-lg">
-            {loggedIn ? "Create posts" : "Try it free: 3 posts on us"}
-          </Link>
+      <main className="hero hero-split">
+        <div>
+          <p className="eyebrow">For students, creators &amp; small businesses</p>
+          <h1>
+            Captions that sound like <span className="highlight">you.</span>
+          </h1>
+          <p className="lead">
+            Launching a drop, promoting your pop-up, or posting grad pics. Socially learns from your old
+            posts (and your website, if you have one), so you get three options that sound like you wrote
+            them, not like a chatbot did. It can make a branded graphic to go with them, too.
+          </p>
+          <div className="cta-row">
+            <Link href={start} className="btn btn-primary btn-lg">
+              {loggedIn ? "Write a caption" : "Try it free: 3 posts on us"}
+            </Link>
+          </div>
         </div>
-
-        <ul className="features">
-          <li>
-            <strong>Post ideas</strong>
-            <span>Three different angles every time, so your feed never feels repetitive.</span>
-          </li>
-          <li>
-            <strong>Captions</strong>
-            <span>Written for the platform you choose, in the tone that fits your brand.</span>
-          </li>
-          <li>
-            <strong>Hashtags</strong>
-            <span>A mix of broad, niche, and local tags to reach people who&apos;ll actually buy.</span>
-          </li>
-        </ul>
+        <figure className="hero-photo">
+          <img src={PHOTOS.hero.src} alt={PHOTOS.hero.alt} />
+          <div className="float-card">
+            <p className="hook">sketch → sample → your closet 🧵</p>
+            <p className="muted">new drop friday. which one are you grabbing first?</p>
+          </div>
+          <Credit by={PHOTOS.hero.by} link={PHOTOS.hero.link} />
+        </figure>
       </main>
 
-      <section className="why">
+      <section className="section">
+        <h2>How it works</h2>
+        <p className="lead">Set it up once in about two minutes. After that, a caption takes one click.</p>
+        <ol className="steps">
+          <li>
+            <strong>Paste a few old captions</strong>
+            <span className="muted">Socially picks up how you write: lowercase or not, your emoji, your humor.</span>
+          </li>
+          <li>
+            <strong>Pick what you&apos;re posting</strong>
+            <span className="muted">Graduation, a night out, a big win, a photo dump, or something for your club or side hustle.</span>
+          </li>
+          <li>
+            <strong>Tell it what happened</strong>
+            <span className="muted">A sentence is enough. Who was there, what it meant, who you want to thank.</span>
+          </li>
+          <li>
+            <strong>Pick your favorite of 3</strong>
+            <span className="muted">Funny, sentimental or a one-liner. Copy it, or make a matching story graphic.</span>
+          </li>
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>Not another AI-sounding caption</h2>
+        <p className="lead">Same grad pics, same request. Example only.</p>
+        <div className="compare">
+          <div className="card bad">
+            <p className="eyebrow small-eyebrow">A generic AI chatbot</p>
+            <p>🎓✨ Today marks the end of an incredible journey and the beginning of a new chapter! Grateful for every lesson, every late night, and every memory. The future is bright! #Graduation #ClassOf2027 #Blessed #NewBeginnings</p>
+          </div>
+          <div className="card">
+            <p className="eyebrow small-eyebrow">Socially, after reading your old posts</p>
+            <p>
+              they&apos;re really letting me leave with a degree huh 🎓 thank you mom, dad, and the library
+              third floor for raising me
+            </p>
+            <p className="muted small" style={{ marginTop: 10 }}>
+              Doesn&apos;t know your school yet? It leaves a <span className="placeholder-tag">[SCHOOL]</span> for you to fill in instead of guessing.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section photo-strip">
+        <figure>
+          <img src={PHOTOS.night.src} alt={PHOTOS.night.alt} />
+          <Credit by={PHOTOS.night.by} link={PHOTOS.night.link} />
+        </figure>
+        <figure>
+          <img src={PHOTOS.party.src} alt={PHOTOS.party.alt} />
+          <Credit by={PHOTOS.party.by} link={PHOTOS.party.link} />
+        </figure>
+      </section>
+
+      <section className="section">
+        <h2>For your life, and your side hustle</h2>
+        <p className="lead">Same tool, two modes.</p>
+        <div className="audiences">
+          <div className="card">
+            <p className="eyebrow small-eyebrow">Personal posts</p>
+            <strong>Grad pics, nights out, wins, photo dumps</strong>
+            <p className="muted">Short, natural captions in your voice. A LinkedIn version for the internship announcement, too.</p>
+          </div>
+          <div className="card">
+            <p className="eyebrow small-eyebrow">Clubs, businesses &amp; events</p>
+            <strong>Promote the thing you run</strong>
+            <p className="muted">Add your website and logo. Socially pulls the real dates and details, writes promo posts, and makes branded graphics.</p>
+          </div>
+        </div>
+      </section>
+
+      {TESTIMONIALS.length > 0 && (
+        <section className="section">
+          <h2>What people are saying</h2>
+          <div className="quotes">
+            {TESTIMONIALS.map((t) => (
+              <figure key={t.name} className="card">
+                <blockquote>&ldquo;{t.quote}&rdquo;</blockquote>
+                <figcaption>
+                  {t.name} <span className="muted small">· {t.role}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="why section">
         <h2>Why it&apos;s worth paying for</h2>
         <div className="why-grid">
           <div>
-            <strong>Hours back every week</strong>
-            <p className="muted">Planning a week of posts takes minutes instead of an evening.</p>
+            <strong>Sounds like you, not a chatbot</strong>
+            <p className="muted">It learns from your own captions, so your friends won&apos;t clock it as AI.</p>
           </div>
           <div>
-            <strong>Cheaper than a social media manager</strong>
-            <p className="muted">Freelancers charge hundreds a month. Socially Pro is a one-time ${price}.</p>
+            <strong>Never makes stuff up</strong>
+            <p className="muted">It only uses what you tell it. Missing details become [placeholders] you fill in.</p>
           </div>
           <div>
-            <strong>Posts that sound like you</strong>
-            <p className="muted">No generic &quot;check out our product!&quot; filler. Specific, human, on-brand.</p>
+            <strong>Pay once, not monthly</strong>
+            <p className="muted">One-time ${price}. Cheaper than one coffee run with the group chat.</p>
           </div>
         </div>
         <div className="card pricing">
           <div>
             <p className="eyebrow small-eyebrow">Socially Pro</p>
             <p className="price">${price} <span className="muted small">one time</span></p>
-            <p className="muted">Unlimited generations, every platform, saved post history.</p>
+            <p className="muted">Unlimited captions, your voice profile, story graphics, every platform, saved history.</p>
           </div>
-          <Link href={loggedIn ? "/dashboard" : "/signup"} className="btn btn-primary">Get started</Link>
+          <Link href={start} className="btn btn-primary">Get started</Link>
         </div>
       </section>
 
