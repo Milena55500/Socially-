@@ -24,9 +24,10 @@ export default function GraphicMaker(props: {
   instagram: string;
   logo: string;
   colors: string[];
+  defaultTemplate?: Template;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [template, setTemplate] = useState<Template>("bold");
+  const [template, setTemplate] = useState<Template>(props.defaultTemplate || "bold");
   const [size, setSize] = useState<SizeKey>(defaultSize(props.platform));
   const [headline, setHeadline] = useState(props.headline);
   const [sub, setSub] = useState(props.sub);
@@ -121,7 +122,7 @@ export default function GraphicMaker(props: {
           {photo ? "Change photo" : "Add your photo"}
           <input type="file" accept="image/*" onChange={(e) => addPhoto(e.target.files?.[0])} hidden />
         </label>
-        {!props.logo && <p className="muted small">Tip: add your logo in Brand Kit and it shows up here.</p>}
+        {!props.logo && <p className="muted small">Tip: add your photo above, or a logo in your profile.</p>}
         {error && <p className="error">{error}</p>}
         <button type="button" className="btn btn-primary" onClick={download}>Download PNG</button>
       </div>

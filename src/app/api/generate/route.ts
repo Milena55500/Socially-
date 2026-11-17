@@ -31,10 +31,12 @@ export async function POST(req: Request) {
       audience: String(body.audience ?? "").slice(0, 300),
       platform: String(body.platform ?? "Instagram").slice(0, 40),
       tone: String(body.tone ?? "Friendly").slice(0, 40),
-      link: String(body.link ?? "").trim().slice(0, 500),
+      link: body.kind === "personal" ? "" : String(body.link ?? "").trim().slice(0, 500),
+      kind: body.kind === "personal" ? "personal" : "business",
+      occasion: String(body.occasion ?? "").slice(0, 60),
     };
     if (!input.product.trim()) {
-      return NextResponse.json({ error: "Tell us about the product you want to post about." }, { status: 400 });
+      return NextResponse.json({ error: "Tell us what the post is about." }, { status: 400 });
     }
 
     // Pull in everything we know about this business so the posts are true and sound like them.

@@ -262,3 +262,10 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent-2); 
   .photo-strip { grid-template-columns: 1fr; }
   .photo-strip img { height: 240px; }
 }
+
+/* Occasion chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-weight: 600; font-size: 0.9rem; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+.chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.audiences { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.audiences .card { display: flex; flex-direction: column; gap: 8px; }

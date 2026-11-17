@@ -62,7 +62,7 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
         body: JSON.stringify({ ...form, ...extra }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't save your Brand Kit.");
+      if (!res.ok) throw new Error(data.error || "Couldn't save your profile.");
       const saved = { ...EMPTY_BRAND, ...data.brand } as Brand;
       setForm(saved);
       onSaved(saved);
@@ -84,12 +84,12 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
         <div className="brand-head">
           {brand.logo ? <img src={brand.logo} alt="" className="brand-logo" /> : <div className="brand-logo empty">Logo</div>}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p className="eyebrow small-eyebrow">Your Brand Kit</p>
-            <h2>{brand.businessName || "Your business"}</h2>
+            <p className="eyebrow small-eyebrow">Your profile</p>
+            <h2>{brand.businessName || brand.instagram || "You"}</h2>
             <p className="muted small">
               {[brand.websiteUrl && (brand.websiteRead ? "Website read ✓" : "Website not readable"), brand.samplePosts && "Past posts ✓", brand.instagram]
                 .filter(Boolean)
-                .join(" · ") || "Add your website or past posts so Socially gets the facts right."}
+                .join(" · ") || "Add a few past captions so Socially sounds like you."}
             </p>
           </div>
           <div className="swatches">
@@ -107,7 +107,7 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
             )}
             {b.voice && <p className="small"><strong>Your voice:</strong> {b.voice}</p>}
             {b.missing.length > 0 && (
-              <p className="small muted"><strong>Still missing:</strong> {b.missing.join(", ")}. Add these in Notes, or mention them when you create posts.</p>
+              <p className="small muted"><strong>Still missing:</strong> {b.missing.join(", ")}. Add these in About you, or mention them when you create posts.</p>
             )}
           </details>
         )}
@@ -118,28 +118,28 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
   return (
     <section className="card brand-kit gen-form">
       <div>
-        <p className="eyebrow small-eyebrow">Step 1 · Brand Kit</p>
-        <h2>Teach Socially about your business</h2>
+        <p className="eyebrow small-eyebrow">Step 1 · Your profile</p>
+        <h2>Teach Socially how you post</h2>
         <p className="muted small">
-          Do this once. Socially reads your website and past posts so it uses your real details and writes the way you do, instead of making things up.
+          Do this once. Socially learns from your old captions so new ones sound like you, not like AI. Running a business, club or side hustle? Add its website too and Socially will use the real details.
         </p>
       </div>
       <div className="grid-2">
         <label>
-          Business or brand name
-          <input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="e.g. Pop Up Ave" />
+          Your name, or your business/club
+          <input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="e.g. Milena, or Pop Up Ave" />
         </label>
         <label>
-          Website
-          <input value={form.websiteUrl} onChange={(e) => set("websiteUrl", e.target.value)} placeholder="e.g. popupave.com" inputMode="url" />
+          Website <span className="muted small">(optional)</span>
+          <input value={form.websiteUrl} onChange={(e) => set("websiteUrl", e.target.value)} placeholder="business, club or portfolio site" inputMode="url" />
         </label>
       </div>
       <label>
-        Instagram handle <span className="muted small">(used in captions and on your graphics)</span>
+        Instagram handle <span className="muted small">(shows on your graphics)</span>
         <input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@yourbusiness" />
       </label>
       <label>
-        Paste 3–5 of your past posts <span className="muted small">(this is how Socially learns your voice)</span>
+        Paste 3–5 of your past captions <span className="muted small">(this is how Socially learns your voice)</span>
         <textarea
           rows={6}
           value={form.samplePosts}
@@ -148,8 +148,8 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
         />
       </label>
       <label>
-        Anything else we should know? <span className="muted small">(upcoming dates, prices, location, what makes you different)</span>
-        <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="e.g. Next market is Saturday 12/6, 10–4, in the library courtyard. 40+ local makers, free entry." />
+        About you <span className="muted small">(school, major, class year, friends you tag a lot, or business details)</span>
+        <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="e.g. Penn State, marketing major, class of 2027. Roommates: @jess and @kayla. Or: our market is Sat 12/6, 10–4, free entry." />
       </label>
       <div className="logo-row">
         <div className="logo-drop">
@@ -157,7 +157,7 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
         </div>
         <div className="logo-actions">
           <label className="file-btn btn btn-ghost">
-            {form.logo ? "Change logo" : "Upload logo"}
+            {form.logo ? "Change logo" : "Upload a logo (optional)"}
             <input type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => onLogo(e.target.files?.[0])} />
           </label>
           <div className="color-row">
@@ -182,7 +182,7 @@ export default function BrandKit({ brand, onSaved }: { brand: Brand; onSaved: (b
       {error && <p className="error">{error}</p>}
       <div className="row-gap">
         <button className="btn btn-primary" disabled={saving} onClick={() => save()}>
-          {saving ? "Reading your website…" : "Save Brand Kit"}
+          {saving ? (form.websiteUrl ? "Reading your website…" : "Saving…") : "Save profile"}
         </button>
         {isSetUp && (
           <>

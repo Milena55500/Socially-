@@ -1,6 +1,6 @@
 # Socially
 
-AI-powered social media assistant for small businesses and content creators.
+AI caption writer for college students and young creators (grad pics, nights out, accomplishments, photo dumps), with a business mode for clubs, side hustles and small businesses.
 Describe what you're promoting and get three ready-to-post ideas with hooks, captions, hashtags, and visual suggestions.
 
 ## What makes it different
