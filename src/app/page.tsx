@@ -8,22 +8,22 @@ export const dynamic = "force-dynamic";
 const unsplash = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
 const PHOTOS = {
   hero: {
+    src: unsplash("photo-1753162660995-52218587ce71", 900),
+    alt: "Two young designers filming a video about their sketches in their studio",
+    by: "Vitaly Gariev",
+    link: "https://unsplash.com/photos/two-women-are-filming-a-video-tvePcqY52-4",
+  },
+  night: {
+    src: unsplash("photo-1768127502130-bca3e208eba6"),
+    alt: "A young woman in a baseball cap at a lantern-lit market stall",
+    by: "Tuaans",
+    link: "https://unsplash.com/photos/young-woman-in-a-baseball-cap-at-a-market-stall-c-wuBHes0So",
+  },
+  party: {
     src: unsplash("photo-1760348082270-3a46a3512850", 900),
     alt: "A graduate celebrating outdoors with friends and family",
     by: "Mattia Revelant",
     link: "https://unsplash.com/photos/graduation-celebration-with-family-and-friends-outdoors-pabZkFHzgYg",
-  },
-  night: {
-    src: unsplash("photo-1647071012620-1f30c06e32a0"),
-    alt: "A group of friends out together on a city street at night",
-    by: "Daesun Kim",
-    link: "https://unsplash.com/photos/a-group-of-people-standing-outside-of-a-building-at-night-AivZxl17aOI",
-  },
-  party: {
-    src: unsplash("photo-1517457373958-b7bdd4587205", 900),
-    alt: "A group of young people laughing together at a party under string lights",
-    by: "Samantha Gades",
-    link: "https://unsplash.com/photos/laughing-people-in-party-fIHozNWfcvs",
   },
 };
 
@@ -65,14 +65,14 @@ export default async function Home() {
 
       <main className="hero hero-split">
         <div>
-          <p className="eyebrow">For college students &amp; young creators</p>
+          <p className="eyebrow">For students, creators &amp; small businesses</p>
           <h1>
             Captions that sound like <span className="highlight">you.</span>
           </h1>
           <p className="lead">
-            Grad pics, a night out, the internship you finally landed. You&apos;ve got the photos, now get the
-            caption. Socially learns from your old posts, so you get three options that sound like you
-            wrote them (not like a chatbot did), plus a story graphic if you want one.
+            Launching a drop, promoting your pop-up, or posting grad pics. Socially learns from your old
+            posts (and your website, if you have one), so you get three options that sound like you wrote
+            them, not like a chatbot did. It can make a branded graphic to go with them, too.
           </p>
           <div className="cta-row">
             <Link href={start} className="btn btn-primary btn-lg">
@@ -83,8 +83,8 @@ export default async function Home() {
         <figure className="hero-photo">
           <img src={PHOTOS.hero.src} alt={PHOTOS.hero.alt} />
           <div className="float-card">
-            <p className="hook">4 years, 3 majors, 1 diploma 🎓</p>
-            <p className="muted">thank you to everyone who got me here (especially mom)</p>
+            <p className="hook">sketch → sample → your closet 🧵</p>
+            <p className="muted">new drop friday. which one are you grabbing first?</p>
           </div>
           <Credit by={PHOTOS.hero.by} link={PHOTOS.hero.link} />
         </figure>
